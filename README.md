@@ -1,7 +1,7 @@
 # go-todo-app
 REST API пет проект на GO с использованием gin-gonic
 
-Команда инициализирует миграцию (создает папку schema и 2 sql файла для миграций)
+Команда инициализирует миграцию (создает папку schema и 2 sql файла для миграций)<br />
  migrate create -ext sql -dir ./schema -seq init
 Детальный разбор команды:
 migrate create  - создание миграции через migrate утилиту
