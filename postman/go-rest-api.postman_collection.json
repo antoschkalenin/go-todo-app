@@ -1,0 +1,402 @@
+{
+	"info": {
+		"_postman_id": "be3ae1c7-8d78-4fcf-a48a-1aa65252c042",
+		"name": "go-rest-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "lists",
+					"item": [
+						{
+							"name": "создать список",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"первый список\",\n    \"description\": \"описание первого списка\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}api/lists/",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"lists",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "обновить список по list id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"девятый список\",\n    \"description\": \"описание девятого списка\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}api/lists/11",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"lists",
+										"11"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "получить список пользователя",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}api/lists/",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"lists",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "получить список пользователя по id списка",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}api/lists/1",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"lists",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "удалить список пользователя по id списка Copy",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}api/lists/7",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"lists",
+										"7"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "items",
+					"item": [
+						{
+							"name": "создать элемент списока",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"второй элемент\",\n    \"description\": \"описание второго элемента\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}api/lists/5/items",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"lists",
+										"5",
+										"items"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "получить элементы пользователя",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}api/lists/5/items",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"lists",
+										"5",
+										"items"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "получить элемент пользователя по id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}api/items/4",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"items",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "удалить элемент пользователя по item id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}api/items/3",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"items",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "обновить элемент по item id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{JWT_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"upd элемент\",\n    \"description\": \"обновить элемент\",\n    \"done\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}api/items/9",
+									"host": [
+										"{{HOST}}api"
+									],
+									"path": [
+										"items",
+										"9"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "регистрация",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Anton\",\n    \"username\": \"klenin_ay\",\n    \"password\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}auth/sign-up",
+							"host": [
+								"{{HOST}}auth"
+							],
+							"path": [
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "аутентификация (JWT token)",
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"klenin_ay\",\n    \"password\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}auth/sign-in",
+							"host": [
+								"{{HOST}}auth"
+							],
+							"path": [
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
