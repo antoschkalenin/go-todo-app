@@ -46,13 +46,13 @@ func main() {
 
 	// dependency injection (внутренний слой не зависит от внешнего, внешний зависит от внутреннего).
 	// https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
-	// Наши обработчики (handlers) будут вызывать сервисы поэтому
+	// Наши маршруты (routes) будут вызывать сервисы поэтому
 	// добавим в структуру указатели на сервис.
 	// Создадим в нужном порядке наши зависимости:
-	// 1)репо 2)сервисы 3)обработчики
+	// 1)репо 2)сервисы 3)маршруты
 	repo := repository.NewRepository(db)
 	services := service.NewService(repo)
-	handlers := controller.NewRouters(services)
+	routes := controller.NewRouters(services)
 
 	srv := new(todo.Server)
 	// запускаем сервер
@@ -61,7 +61,7 @@ func main() {
 	// - завершение работы SQL запросов к БД
 	// для этого запустим наш сервис в goroutine (синтаксис go func())
 	go func() {
-		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		if err := srv.Run(viper.GetString("port"), routes.InitRoutes()); err != nil {
 			logrus.Fatalf("ошибка запуска приложения: %s", err.Error())
 		}
 	}()
