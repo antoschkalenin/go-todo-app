@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/zhashkevych/todo"
+	"github.com/zhashkevych/todo/model"
 	"github.com/zhashkevych/todo/pkg/repository"
 	"time"
 )
@@ -64,7 +64,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 }
 
 // CreateUser создае пользователя
-func (s *AuthService) CreateUser(user todo.User) (int, error) {
+func (s *AuthService) CreateUser(user model.User) (int, error) {
 	// перед записью в БД хэшируем пароль
 	user.Password = generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)

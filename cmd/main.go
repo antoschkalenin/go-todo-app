@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/zhashkevych/todo"
-	"github.com/zhashkevych/todo/pkg/handler"
+	"github.com/zhashkevych/todo/pkg/controller"
 	"github.com/zhashkevych/todo/pkg/repository"
 	"github.com/zhashkevych/todo/pkg/service"
 	"os"
@@ -52,7 +52,7 @@ func main() {
 	// 1)репо 2)сервисы 3)обработчики
 	repo := repository.NewRepository(db)
 	services := service.NewService(repo)
-	handlers := handler.NewHandler(services)
+	handlers := controller.NewRouters(services)
 
 	srv := new(todo.Server)
 	// запускаем сервер
@@ -70,7 +70,7 @@ func main() {
 	// приложения добавим блокировку функции main с помощью канала os.Signal
 	quit := make(chan os.Signal, 1)
 	// запись в канал будет происходить когда процесс в котором выполняется наше приложение
-	// получит сигнал от системы типа syscall.SIGTERM или syscall.SIGINT, это сизналы в UNIX системах
+	// получит сигнал от системы типа syscall.SIGTERM или syscall.SIGINT, это сигналы в UNIX системах
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	// строка для чтения из канала которая будет блокировать выполнение главной goroutine main
 	<-quit

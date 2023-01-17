@@ -1,14 +1,14 @@
-package handler
+package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/todo"
+	"github.com/zhashkevych/todo/model"
 	"net/http"
 	"strconv"
 )
 
 // метод создает элемент
-func (h *Handler) createItem(c *gin.Context) {
+func (r *Routes) createItem(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
@@ -20,13 +20,13 @@ func (h *Handler) createItem(c *gin.Context) {
 		return
 	}
 	// бинд входящих значений с валидацией
-	var item todo.TodoItem
+	var item model.TodoItem
 	if err := c.BindJSON(&item); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "не валидный item")
 		return
 	}
 	// создаем элемент
-	id, err := h.services.TodoItem.Create(userId, listId, item)
+	id, err := r.services.TodoItem.Create(userId, listId, item)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -36,7 +36,7 @@ func (h *Handler) createItem(c *gin.Context) {
 }
 
 // метод возвращает список элементов пользователя
-func (h *Handler) getAllItems(c *gin.Context) {
+func (r *Routes) getAllItems(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
@@ -46,7 +46,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, "не валидный параметр id списка")
 		return
 	}
-	items, err := h.services.TodoItem.GetAll(userId, listId)
+	items, err := r.services.TodoItem.GetAll(userId, listId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -56,7 +56,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 }
 
 // метод возващает элемент пользователя
-func (h *Handler) getItemById(c *gin.Context) {
+func (r *Routes) getItemById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
@@ -66,7 +66,7 @@ func (h *Handler) getItemById(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, "не валидный параметр id элемента")
 		return
 	}
-	item, err := h.services.TodoItem.GetById(itemId, userId)
+	item, err := r.services.TodoItem.GetById(itemId, userId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -76,7 +76,7 @@ func (h *Handler) getItemById(c *gin.Context) {
 }
 
 // метод обновляет элемент пользователя
-func (h *Handler) updateItemById(c *gin.Context) {
+func (r *Routes) updateItemById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
@@ -89,12 +89,12 @@ func (h *Handler) updateItemById(c *gin.Context) {
 		return
 	}
 	// получение от пользователя данных и валидация
-	var input todo.UpdateItemInput
+	var input model.UpdateItemInput
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	if err = h.services.TodoItem.Update(userId, itemId, input); err != nil {
+	if err = r.services.TodoItem.Update(userId, itemId, input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -103,7 +103,7 @@ func (h *Handler) updateItemById(c *gin.Context) {
 }
 
 // метод удаляет элемент пользователя
-func (h *Handler) deleteItemById(c *gin.Context) {
+func (r *Routes) deleteItemById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
@@ -115,7 +115,7 @@ func (h *Handler) deleteItemById(c *gin.Context) {
 		return
 	}
 	// удаление по userId и itemId
-	err = h.services.TodoItem.Delete(userId, itemId)
+	err = r.services.TodoItem.Delete(userId, itemId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

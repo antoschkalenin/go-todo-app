@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"errors"
@@ -14,7 +14,7 @@ const (
 
 // userIdentity метод из заголовка получает токен пользователя и парсит его,
 // далее добавляет в конекст id пользвоателя для использования в приложении
-func (h *Handler) userIdentity(c *gin.Context) {
+func (r *Routes) userIdentity(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 	// проверяем что заголовок из конекста запроса не пустой
 	if header == "" {
@@ -28,7 +28,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 	// парсим токен и получаем id пользователя
-	userId, err := h.services.Authorization.ParseToken(headerPart[1])
+	userId, err := r.services.Authorization.ParseToken(headerPart[1])
 
 	// проверяем что не получили ошибок от парсинга токена
 	if err != nil {

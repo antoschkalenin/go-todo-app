@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
-	"github.com/zhashkevych/todo"
+	"github.com/zhashkevych/todo/model"
 	"strings"
 )
 
-type TodoListPostgres struct {
+type TodoListRepository struct {
 	db *sqlx.DB
 }
 
-// NewTodoListPostgres конструктор
-func NewTodoListPostgres(db *sqlx.DB) *TodoListPostgres {
-	return &TodoListPostgres{db: db}
+// NewTodoListRepository конструктор
+func NewTodoListRepository(db *sqlx.DB) *TodoListRepository {
+	return &TodoListRepository{db: db}
 }
 
 // Create метод создания списка, метод транзакционный
-func (r *TodoListPostgres) Create(userId int, list todo.TodoList) (int, error) {
+func (r *TodoListRepository) Create(userId int, list model.TodoList) (int, error) {
 	// для использования транзакции используем метод Begin
 	tx, err := r.db.Begin()
 	if err != nil {
@@ -42,8 +42,8 @@ func (r *TodoListPostgres) Create(userId int, list todo.TodoList) (int, error) {
 }
 
 // GetAll возвращает все списки пользователя
-func (r *TodoListPostgres) GetAll(userId int) ([]todo.TodoList, error) {
-	var lists []todo.TodoList
+func (r *TodoListRepository) GetAll(userId int) ([]model.TodoList, error) {
+	var lists []model.TodoList
 	query := fmt.Sprintf("select tl.id, tl.title, tl.description from %s tl "+
 		"inner join %s ul on tl.id = ul.list_id where ul.user_id = $1",
 		todoListsTable, usersListsTable)
@@ -54,8 +54,8 @@ func (r *TodoListPostgres) GetAll(userId int) ([]todo.TodoList, error) {
 }
 
 // GetById возвращает список пользователя по listId
-func (r *TodoListPostgres) GetById(userId, listId int) (todo.TodoList, error) {
-	var list todo.TodoList
+func (r *TodoListRepository) GetById(userId, listId int) (model.TodoList, error) {
+	var list model.TodoList
 	query := fmt.Sprintf("select tl.id, tl.title, tl.description from %s tl "+
 		"inner join %s ul on tl.id = ul.list_id where ul.user_id = $1 and tl.id = $2",
 		todoListsTable, usersListsTable)
@@ -64,7 +64,7 @@ func (r *TodoListPostgres) GetById(userId, listId int) (todo.TodoList, error) {
 }
 
 // Delete удаляет список пользователя по listId
-func (r *TodoListPostgres) Delete(userId, listId int) error {
+func (r *TodoListRepository) Delete(userId, listId int) error {
 	query := fmt.Sprintf("delete from %s tl using %s ul "+
 		"where tl.id = ul.list_id and ul.list_id = $1 and ul.user_id = $2",
 		todoListsTable, usersListsTable)
@@ -73,7 +73,7 @@ func (r *TodoListPostgres) Delete(userId, listId int) error {
 }
 
 // Update обновляет список пользователя по listId
-func (r *TodoListPostgres) Update(userId, listId int, input todo.UpdateListInput) error {
+func (r *TodoListRepository) Update(userId, listId int, input model.UpdateListInput) error {
 	// иницилизуерм slice строк, интрфейсов
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)

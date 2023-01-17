@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/zhashkevych/todo"
+	"github.com/zhashkevych/todo/model"
 	"github.com/zhashkevych/todo/pkg/repository"
 )
 
@@ -17,17 +17,17 @@ func NewTodoListService(repo repository.TodoList) *TodoListService {
 // Create метод создания списка
 // userId - id пользователя
 // list - данные списка от пользователя
-func (s *TodoListService) Create(userId int, list todo.TodoList) (int, error) {
+func (s *TodoListService) Create(userId int, list model.TodoList) (int, error) {
 	return s.repo.Create(userId, list)
 }
 
 // GetAll возвращает все списки пользователя
-func (s *TodoListService) GetAll(userId int) ([]todo.TodoList, error) {
+func (s *TodoListService) GetAll(userId int) ([]model.TodoList, error) {
 	return s.repo.GetAll(userId)
 }
 
 // GetById возвращает список пользователя по listId
-func (s *TodoListService) GetById(userId, listId int) (todo.TodoList, error) {
+func (s *TodoListService) GetById(userId, listId int) (model.TodoList, error) {
 	return s.repo.GetById(userId, listId)
 }
 
@@ -37,7 +37,7 @@ func (s *TodoListService) Delete(userId, listId int) error {
 }
 
 // Update обновляет список пользователя по listId
-func (s *TodoListService) Update(userId, listId int, input todo.UpdateListInput) error {
+func (s *TodoListService) Update(userId, listId int, input model.UpdateListInput) error {
 	// валидация структуры
 	if err := input.Validate(); err != nil {
 		return err

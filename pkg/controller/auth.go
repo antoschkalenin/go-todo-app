@@ -1,8 +1,8 @@
-package handler
+package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/todo"
+	"github.com/zhashkevych/todo/model"
 	"net/http"
 )
 
@@ -13,8 +13,8 @@ type signInInput struct {
 }
 
 // отвечат за регистрацию
-func (h *Handler) signUp(c *gin.Context) {
-	var input todo.User
+func (r *Routes) signUp(c *gin.Context) {
+	var input model.User
 
 	// делаем бинд JSON и валидируем по правилам в структуре todo.User
 	if err := c.BindJSON(&input); err != nil {
@@ -23,7 +23,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.Authorization.CreateUser(input)
+	id, err := r.services.Authorization.CreateUser(input)
 	// если метод создания пользователя вернет ошибку то вернем ответ
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -33,7 +33,7 @@ func (h *Handler) signUp(c *gin.Context) {
 }
 
 // отвечает за аутентификацию с помощью JWT
-func (h *Handler) signIn(c *gin.Context) {
+func (r *Routes) signIn(c *gin.Context) {
 	var input signInInput
 
 	// делаем бинд JSON и валидируем по правилам в структуре signInInput
@@ -43,7 +43,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.services.Authorization.GenerateToken(input.Username, input.Password)
+	token, err := r.services.Authorization.GenerateToken(input.Username, input.Password)
 	// если метод генерации токена пользователя вернет ошибку то вернем ответ
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

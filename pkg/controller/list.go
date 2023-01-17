@@ -1,31 +1,31 @@
-package handler
+package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zhashkevych/todo"
+	"github.com/zhashkevych/todo/model"
 	"net/http"
 	"strconv"
 )
 
 // структура для ответа пользвоателю
 type getAllListsResponse struct {
-	Data []todo.TodoList `json:"data"`
+	Data []model.TodoList `json:"data"`
 }
 
 // метод создания списка
-func (h *Handler) createList(c *gin.Context) {
+func (r *Routes) createList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
 	// получение от пользователя данных и валидация
-	var input todo.TodoList
+	var input model.TodoList
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	// создаем список
-	id, err := h.services.TodoList.Create(userId, input)
+	id, err := r.services.TodoList.Create(userId, input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -36,13 +36,13 @@ func (h *Handler) createList(c *gin.Context) {
 }
 
 // метод возвращает все списки пользователя
-func (h *Handler) getAllLists(c *gin.Context) {
+func (r *Routes) getAllLists(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
 	// получение списка пользователя
-	lists, err := h.services.TodoList.GetAll(userId)
+	lists, err := r.services.TodoList.GetAll(userId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -52,7 +52,7 @@ func (h *Handler) getAllLists(c *gin.Context) {
 }
 
 // метод возвращает список по listId
-func (h *Handler) getListById(c *gin.Context) {
+func (r *Routes) getListById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
@@ -65,7 +65,7 @@ func (h *Handler) getListById(c *gin.Context) {
 		return
 	}
 	// получение списка по userId и listId
-	list, err := h.services.TodoList.GetById(userId, listId)
+	list, err := r.services.TodoList.GetById(userId, listId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -75,7 +75,7 @@ func (h *Handler) getListById(c *gin.Context) {
 }
 
 // метод обновляет список пользователя по lisId
-func (h *Handler) updateListById(c *gin.Context) {
+func (r *Routes) updateListById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
@@ -88,12 +88,12 @@ func (h *Handler) updateListById(c *gin.Context) {
 		return
 	}
 	// получение от пользователя данных и валидация
-	var input todo.UpdateListInput
+	var input model.UpdateListInput
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	if err = h.services.TodoList.Update(userId, listId, input); err != nil {
+	if err = r.services.TodoList.Update(userId, listId, input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -102,7 +102,7 @@ func (h *Handler) updateListById(c *gin.Context) {
 }
 
 // метод удаляет список пользователя по listId
-func (h *Handler) deleteListById(c *gin.Context) {
+func (r *Routes) deleteListById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
@@ -115,7 +115,7 @@ func (h *Handler) deleteListById(c *gin.Context) {
 		return
 	}
 	// удаление по userId и listId
-	err = h.services.TodoList.Delete(userId, listId)
+	err = r.services.TodoList.Delete(userId, listId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

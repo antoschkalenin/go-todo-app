@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
-	"github.com/zhashkevych/todo"
+	"github.com/zhashkevych/todo/model"
 	"strings"
 )
 
-type TodoItemPostgres struct {
+type TodoItemRepository struct {
 	db *sqlx.DB
 }
 
-// NewTodoItemPostgres конструктор
-func NewTodoItemPostgres(db *sqlx.DB) *TodoItemPostgres {
-	return &TodoItemPostgres{db: db}
+// NewTodoItemRepository конструктор
+func NewTodoItemRepository(db *sqlx.DB) *TodoItemRepository {
+	return &TodoItemRepository{db: db}
 }
 
 // Create метод создания элемента в списке пользователя
-func (r *TodoItemPostgres) Create(listId int, item todo.TodoItem) (int, error) {
+func (r *TodoItemRepository) Create(listId int, item model.TodoItem) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return 0, err
@@ -43,8 +43,8 @@ func (r *TodoItemPostgres) Create(listId int, item todo.TodoItem) (int, error) {
 }
 
 // GetAll метод возвращает элементы пользователя
-func (r *TodoItemPostgres) GetAll(userId, listId int) ([]todo.TodoItem, error) {
-	var items []todo.TodoItem
+func (r *TodoItemRepository) GetAll(userId, listId int) ([]model.TodoItem, error) {
+	var items []model.TodoItem
 	query := fmt.Sprintf("select ti.id, ti.title, ti.description, ti.done "+
 		"from %s ti "+
 		"inner join %s li on ti.id = li.item_id "+
@@ -57,8 +57,8 @@ func (r *TodoItemPostgres) GetAll(userId, listId int) ([]todo.TodoItem, error) {
 }
 
 // GetById метод возвращает элемент пользователя
-func (r *TodoItemPostgres) GetById(itemId, userId int) (todo.TodoItem, error) {
-	var item todo.TodoItem
+func (r *TodoItemRepository) GetById(itemId, userId int) (model.TodoItem, error) {
+	var item model.TodoItem
 	query := fmt.Sprintf("select ti.id, ti.title, ti.description, ti.done "+
 		"from %s ti "+
 		"inner join %s li on ti.id = li.item_id "+
@@ -71,7 +71,7 @@ func (r *TodoItemPostgres) GetById(itemId, userId int) (todo.TodoItem, error) {
 }
 
 // Delete метод удаляет элемент пользователя
-func (r *TodoItemPostgres) Delete(userId, itemId int) error {
+func (r *TodoItemRepository) Delete(userId, itemId int) error {
 	query := fmt.Sprintf("delete from %s ti using %s li, %s ul "+
 		"where ti.id = li.item_id and li.list_id = ul.list_id and "+
 		"ti.id = $1 and ul.user_id = $2",
@@ -81,7 +81,7 @@ func (r *TodoItemPostgres) Delete(userId, itemId int) error {
 }
 
 // Update метод обновляет элемент пользователя
-func (r *TodoItemPostgres) Update(userId, itemId int, input todo.UpdateItemInput) error {
+func (r *TodoItemRepository) Update(userId, itemId int, input model.UpdateItemInput) error {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1

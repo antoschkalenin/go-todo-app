@@ -2,7 +2,7 @@ package service
 
 import (
 	"errors"
-	"github.com/zhashkevych/todo"
+	"github.com/zhashkevych/todo/model"
 	"github.com/zhashkevych/todo/pkg/repository"
 )
 
@@ -18,7 +18,7 @@ func NewTodoItemService(repo repository.TodoItem, listRepo repository.TodoList) 
 }
 
 // Create метод создания элемента в списке пользователя
-func (s *TodoItemService) Create(userId, listId int, item todo.TodoItem) (int, error) {
+func (s *TodoItemService) Create(userId, listId int, item model.TodoItem) (int, error) {
 	// проверка по user id
 	_, err := s.listRepo.GetById(userId, listId)
 	if err != nil {
@@ -28,12 +28,12 @@ func (s *TodoItemService) Create(userId, listId int, item todo.TodoItem) (int, e
 }
 
 // GetAll метод возвращает элементы пользователя
-func (s *TodoItemService) GetAll(userId, listId int) ([]todo.TodoItem, error) {
+func (s *TodoItemService) GetAll(userId, listId int) ([]model.TodoItem, error) {
 	return s.repo.GetAll(userId, listId)
 }
 
 // GetById метод возвращает элемент пользователя
-func (s *TodoItemService) GetById(itemId, userId int) (todo.TodoItem, error) {
+func (s *TodoItemService) GetById(itemId, userId int) (model.TodoItem, error) {
 	return s.repo.GetById(itemId, userId)
 }
 
@@ -43,7 +43,7 @@ func (s *TodoItemService) Delete(userId, itemId int) error {
 }
 
 // Update метод обновляет элемент пользователя
-func (s *TodoItemService) Update(userId, itemId int, input todo.UpdateItemInput) error {
+func (s *TodoItemService) Update(userId, itemId int, input model.UpdateItemInput) error {
 	// валидация структуры
 	if err := input.Validate(); err != nil {
 		return err
