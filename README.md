@@ -26,6 +26,7 @@ migrate -path ./schema -database 'postgres://postgres:postgres@localhost:5432/go
 migrate -path ./schema -database 'postgres://postgres:postgres@localhost:5432/go?sslmode=disable' down
 4. Запустить проект через консоль: <b>go run cmd/main.go</b>
 
-В проекте по пути configs/config.yml установлен порт приложения по умолчанию 8001.
+В проекте по пути configs/config.yml установлен порт приложения по умолчанию 8001.<br />
+Приложение доступно по адресу http://localhost:8001/
 
 Так же в проекте есть папка postman для тестирования приложения
