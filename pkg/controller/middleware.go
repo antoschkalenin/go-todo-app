@@ -2,8 +2,13 @@ package controller
 
 import (
 	"errors"
+	"fmt"
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/persist"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -55,4 +60,45 @@ func getUserId(c *gin.Context) (int, error) {
 		return 0, errors.New("id пользователя не валидный")
 	}
 	return idInt, nil
+}
+
+// Authorize авторизация пользователя с помощью casbin
+func Authorize(obj string, act string, adapter persist.Adapter) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userId, existed := c.Get(userCtx)
+		if !existed {
+			c.AbortWithStatusJSON(401, errorResponse{"пользователь еще не авторизовался"})
+			return
+		}
+		idInt, ok := userId.(int)
+		if !ok {
+			c.AbortWithStatusJSON(500, errorResponse{"ошибка при конвертации user id"})
+		}
+		ok, err := enforce(strconv.Itoa(idInt), obj, act, adapter)
+		if err != nil {
+			logrus.Error(err)
+			c.AbortWithStatusJSON(500, errorResponse{"ошибка при авторизации пользователя"})
+			return
+		}
+		if !ok {
+			c.AbortWithStatusJSON(403, errorResponse{"доступ закрыт"})
+			return
+		}
+		c.Next()
+	}
+}
+
+// метод создает enforce, загружает политики и роли
+func enforce(sub, obj, act string, adapter persist.Adapter) (bool, error) {
+	enforcer, err := casbin.NewEnforcer("configs/rbac_model.conf", adapter)
+	if err != nil {
+		return false, fmt.Errorf("не удалось создать casbin Enforcer: %w", err)
+	}
+	// динамическая загрузка политик из БД
+	err = enforcer.LoadPolicy()
+	if err != nil {
+		return false, fmt.Errorf("не удалось загрузить политику из БД: %w", err)
+	}
+	ok, err := enforcer.Enforce(sub, obj, act)
+	return ok, err
 }

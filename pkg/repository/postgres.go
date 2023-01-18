@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	sqlxadapter "github.com/Blank-Xu/sqlx-adapter"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -24,6 +25,8 @@ type Config struct {
 	SSLMode  string
 }
 
+var Adapter *sqlxadapter.Adapter
+
 // NewPostgresDB - возвращает указательно на структуру sqlx.DB и ошибку
 func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 	db, err := sqlx.Open("postgres",
@@ -37,5 +40,6 @@ func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	Adapter, err = sqlxadapter.NewAdapter(db, "casbin_rule")
 	return db, nil
 }

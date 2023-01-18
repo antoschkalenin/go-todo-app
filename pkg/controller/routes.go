@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/zhashkevych/todo/pkg/repository"
 	"github.com/zhashkevych/todo/pkg/service"
 )
 
@@ -35,8 +36,8 @@ func (r *Routes) InitRoutes() *gin.Engine {
 		lists := api.Group("/lists")
 		{
 			// :id - bind на id
-			lists.POST("/", r.createList)
-			lists.GET("/", r.getAllLists)
+			lists.POST("/", Authorize("lists", "write", repository.Adapter), r.createList)
+			lists.GET("/", Authorize("lists", "read", repository.Adapter), r.getAllLists)
 			lists.GET("/:id", r.getListById)
 			lists.PUT("/:id", r.updateListById)
 			lists.DELETE("/:id", r.deleteListById)
