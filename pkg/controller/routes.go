@@ -24,6 +24,7 @@ func (r *Routes) InitRoutes() *gin.Engine {
 	{
 		auth.POST("/sign-up", r.signUp)
 		auth.POST("/sign-in", r.signIn)
+		auth.POST("/sign-in-ad", r.signInAd)
 	}
 
 	// группа end points для работы со списками и их задачами,
