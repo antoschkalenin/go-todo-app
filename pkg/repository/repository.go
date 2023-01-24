@@ -8,6 +8,8 @@ import (
 type Authorization interface {
 	CreateUser(user model.User) (int, error)
 	GetUser(username, password string) (model.User, error)
+	GetUserByUsernameAndByAd(username string, isAd bool) (model.User, error)
+	UpdatePassword(userId int, password string) error
 }
 
 type TodoList interface {

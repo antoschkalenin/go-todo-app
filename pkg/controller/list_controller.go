@@ -30,7 +30,6 @@ func (r *Routes) createList(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-
 	// ответ клиенту
 	c.JSON(http.StatusOK, map[string]interface{}{"id": id})
 }

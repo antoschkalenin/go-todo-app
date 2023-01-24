@@ -6,17 +6,17 @@ import (
 	"net/http"
 )
 
-// структура для логина и пароля от пользователя при аутентификации
+// Структура для логина и пароля от пользователя при аутентификации
 type signInInput struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
-// отвечат за регистрацию
+// Отвечает за регистрацию
 func (r *Routes) signUp(c *gin.Context) {
 	var input model.User
 
-	// делаем бинд JSON и валидируем по правилам в структуре todo.User
+	// делаем bind JSON и валидируем по правилам в структуре User
 	if err := c.BindJSON(&input); err != nil {
 		// возвращаем ответ 400 с ошибкой
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -32,7 +32,7 @@ func (r *Routes) signUp(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{"id": id})
 }
 
-// отвечает за аутентификацию с помощью JWT БД
+// Отвечает за аутентификацию с помощью JWT БД
 func (r *Routes) signIn(c *gin.Context) {
 	var input signInInput
 	if err := c.BindJSON(&input); err != nil {
@@ -41,13 +41,13 @@ func (r *Routes) signIn(c *gin.Context) {
 	}
 	token, err := r.services.Authorization.AuthTokenDB(input.Username, input.Password)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, "Неверный логин или пароль")
 		return
 	}
 	c.JSON(http.StatusOK, map[string]interface{}{"token": token})
 }
 
-// отвечает за аутентификацию с помощью JWT AD
+// Отвечает за аутентификацию с помощью JWT AD
 func (r *Routes) signInAd(c *gin.Context) {
 	var input signInInput
 	if err := c.BindJSON(&input); err != nil {

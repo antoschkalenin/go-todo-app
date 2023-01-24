@@ -24,7 +24,7 @@ const (
 // расширяем стандартный ответ StandardClaims своим tokenClaims с id пользователем
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId string `json:"user_id"`
+	UserId int `json:"user_id"`
 }
 
 type AuthService struct {
@@ -36,7 +36,7 @@ type AuthService struct {
 // 1) токен для парсинга
 // 2) структуру нашего token claims который мы используем для ответа
 // 3) функцию которая возвращает ключ подпись или ошибку, в этой функции проверяем метод подписи токена
-func (s *AuthService) ParseToken(accessToken string) (string, error) {
+func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(accessToken *jwt.Token) (interface{}, error) {
 		// проверяем метод подписи токена если это не HMAC
 		// если все ок то возаращаем ключ подписи иначе ошибку
@@ -47,7 +47,7 @@ func (s *AuthService) ParseToken(accessToken string) (string, error) {
 	})
 	// проверяем на наличие ошибок при вызове метода ParseWithClaims
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	// функция ParseWithClaims возвращает объект токена в котором
 	// есть Claims типа interface,
@@ -55,7 +55,7 @@ func (s *AuthService) ParseToken(accessToken string) (string, error) {
 	claims, ok := token.Claims.(*tokenClaims)
 	// проверяем результат приведения к структуре Claims
 	if !ok {
-		return "", errors.New("claims не относится к типу Claims")
+		return 0, errors.New("claims не относится к типу Claims")
 	}
 	return claims.UserId, nil
 }
@@ -80,7 +80,7 @@ func (s *AuthService) AuthTokenDB(username, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return generateToken(strconv.Itoa(user.Id))
+	return generateToken(user.Id)
 }
 
 // AuthTokenAD входим под пользователем из AD
@@ -90,19 +90,39 @@ func (s *AuthService) AuthTokenAD(username, password string) (string, error) {
 		Server:   os.Getenv("AD_HOST"),
 		Port:     port,
 		BaseDN:   os.Getenv("AD_BASE_DN"),
-		Security: auth.SecurityStartTLS,
+		Security: auth.SecurityNone,
 	}
 	status, err := auth.Authenticate(config, username, password)
 	if err != nil {
-		return "", err
+		return "ошибка авторизации в AD", err
 	}
 	if !status {
-		return "", err
+		return "Неверный логин или пароль AD", err
 	}
-	return generateToken(username)
+
+	user, err := s.repo.GetUserByUsernameAndByAd(username, true)
+	if err != nil {
+		// создаем нового пользователя из данных AD
+		newUser := model.User{
+			Username: username,
+			IsAd:     true,
+			Password: generatePasswordHash(password),
+			Name:     username}
+		user.Id, err = s.repo.CreateUser(newUser)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		// обновляем пароль в БД
+		err = s.repo.UpdatePassword(user.Id, generatePasswordHash(password))
+		if err != nil {
+			return "", err
+		}
+	}
+	return generateToken(user.Id)
 }
 
-func generateToken(userId string) (string, error) {
+func generateToken(userId int) (string, error) {
 	// если такой пользователь существует то сегенрируем токен JWT
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{

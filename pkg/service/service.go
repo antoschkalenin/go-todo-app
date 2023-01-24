@@ -9,7 +9,7 @@ type Authorization interface {
 	CreateUser(user model.User) (int, error)
 	AuthTokenDB(username, password string) (string, error)
 	AuthTokenAD(username, password string) (string, error)
-	ParseToken(token string) (string, error)
+	ParseToken(token string) (int, error)
 }
 
 type TodoList interface {
