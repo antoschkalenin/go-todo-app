@@ -47,7 +47,7 @@ func (r *AuthRepository) GetUserByUsernameAndByAd(username string, isAd bool) (m
 
 // UpdatePassword обновляет hash пароля
 func (r *AuthRepository) UpdatePassword(userId int, password string) error {
-	query := fmt.Sprintf("update %s set password = $1 where userId = $1", usersTable)
+	query := fmt.Sprintf("update %s set password_hash = $1 where id = $2", usersTable)
 	_, err := r.db.Exec(query, password, userId)
 	return err
 }
